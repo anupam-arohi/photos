@@ -28,10 +28,12 @@
    settings  optional   read from EXIF. Sony bodies here did not record ISO.
    featured  optional   true on exactly one photo. Leads the grid and is used
                         as the social preview image.
-   sig       optional   "white" (default), "dark" where the bottom-right corner
-                        is bright, "none" where the image already carries a
-                        burned-in copyright. Set from measured corner luminance
-                        rather than by eye.
+   sig       optional   A RECORD, not a setting. The signature is composited
+                        into the JPEG by resize.sh, which picks the tone from
+                        measured corner luminance. This field just notes which
+                        way it went, so you can see it without opening the file.
+                        Changing it here does nothing; re-run resize.sh with
+                        --sig=white / --sig=dark / --sig=none instead.
    src       optional   which file in Originals/ this came from. Not used by the
                         site, kept so you can find the full-resolution version.
    ========================================================================== */
@@ -369,7 +371,6 @@ window.PHOTOS = [
     tags: ["birds", "water"],
     series: "birds",
     alt: "A goldeneye duckling sprinting flat out across the surface of a lake, wings held out, a thin wake behind it.",
-    sig: "dark",
     settings: "400mm · f/5.6 · 1/400s · ISO 500",
     src: "Nature/TelkkaChickRunning-2b.jpg"
   },

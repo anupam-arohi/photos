@@ -156,27 +156,23 @@ figure{margin:0}
 .tile:hover .frame img.photo{transform:scale(1.022)}
 .tile:hover .frame{border-color:#2a3d55}
 
-/* ---------- signature overlay ----------
-   Presentation only. This does not stop anyone saving the underlying JPG, and
-   it is not meant to. If a photo genuinely must not be reused, burn the
-   signature into the pixels instead, and accept that even that only raises the
-   effort slightly. No right-click blockers here: they irritate real visitors
-   and stop nobody. */
-.sig{
-  position:absolute;
-  right:4%;bottom:4%;
-  width:clamp(90px,18%,180px);
-  height:auto;
-  opacity:.72;
-  filter:drop-shadow(0 1px 3px rgba(0,0,0,.55));
-  pointer-events:none;
-  transition:opacity .25s;
-  z-index:2;
-}
-.tile:hover .sig{opacity:.9}
-@media(max-width:560px){.sig{width:clamp(90px,26%,140px)}}
-/* dark signature on a bright photo needs a light halo instead of a dark one */
-.sig[data-tone="dark"]{filter:drop-shadow(0 1px 3px rgba(255,255,255,.6))}
+/* ---------- signature ----------
+   There is no signature rule here any more, and that is the point.
+
+   This used to be a CSS overlay positioned bottom-right over each photo. Two
+   problems. It was presentation only, so a downloaded or hotlinked file was
+   unsigned. And it sized badly: width was clamp(90px, 18%, 180px), but a grid
+   tile is only about 368px wide, so 18% came to 66px and the 90px floor bound
+   on every single photo. Everything rendered at 24% of tile width instead of
+   the intended 18%, and the inset drifted between 8px and 26px because a
+   percentage `bottom` resolves against height while `right` resolves against
+   width.
+
+   resize.sh now composites the signature into the pixels at a fixed 18% of
+   image width, inset 3% of the shorter edge, so it is identical in every
+   variant and survives a download. See "The signature" in the README.
+   ------------------------------------------------------------------------ */
+
 
 /* ---------- caption ---------- */
 figcaption{

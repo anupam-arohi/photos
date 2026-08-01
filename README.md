@@ -17,8 +17,8 @@ photos.js               ALL photo metadata. The only file you edit to publish.
 gallery.css             shared styles
 gallery.js              grid rendering, filtering, lightbox
 resize.sh               makes web-ready sizes from a full-resolution original
-images/                 web-ready JPGs, three widths each
-images/signature/       signature overlays, white and dark
+images/                 web-ready JPGs, three widths each, signature burned in
+images/signature/       the two signature PNGs, white and dark
 Originals/              your full-res sources (gitignored, stays local)
 .nojekyll               tells GitHub Pages to serve files as-is
 ```
@@ -126,32 +126,59 @@ it as the cover.
 
 ## The signature
 
-Set per photo with the `sig` field:
+**It is composited into the pixels**, by `resize.sh`, at export time. Save the
+file, hotlink it, or screenshot it and the signature comes along. There is no
+CSS overlay any more.
 
-| value            | effect                                                     |
-| ---------------- | ---------------------------------------------------------- |
-| omitted          | white signature. The default, right for most photographs.  |
-| `sig: "dark"`    | dark signature, for bright photographs.                    |
-| `sig: "none"`    | no overlay, for images that already carry a burned-in one.  |
+Geometry, identical in all three widths:
 
-The two PNGs in `images/signature/` are both 400 × 121 with transparency.
+| property | value                                     |
+| -------- | ----------------------------------------- |
+| width    | 18% of the image width                    |
+| inset    | 3% of the **shorter** edge, bottom-right  |
+| opacity  | 72%, over a soft halo for legibility      |
 
-`Oystercatcher` uses `sig: "none"` because the original already has a
-`© Anupam Arohi` watermark burned into the bottom-left corner.
+Tone is chosen automatically. `resize.sh` measures the mean luminance of the
+region the signature will occupy and uses the dark PNG where that corner is
+brighter than 135 out of 255, the white one otherwise. Of the current 38, four
+came out dark. Override with `--sig=white` or `--sig=dark` if you disagree.
 
-It is placed by CSS, bottom-right, at 18% of the image width capped to 180px,
-72% opacity rising to 90% on hover. To change the look, edit the `.sig` rule in
-`gallery.css` in one place and every photo follows.
+For a photo that already carries its own watermark, skip the overlay:
 
-To swap in a different signature, replace those two PNGs. Keep them roughly
-3.3:1 and transparent, or adjust `.sig` to suit.
+```bash
+./resize.sh --sig=none Originals/Nature/MeriHarakka.jpg
+```
 
-**Be clear-eyed about what this does.** A CSS overlay is presentation only. The
-underlying JPG is a plain file and anyone can save it. There are deliberately no
-right-click blockers here, because they irritate real visitors and stop nobody.
-If a photograph genuinely must not be reused, burn the signature into the pixels
-with an ImageMagick `-composite` step, and accept that even that only raises the
-effort a little.
+`Oystercatcher` is exported that way, because the original already has a
+`© Anupam Arohi` burned into the bottom-left.
+
+To swap in a different signature, replace the two PNGs in `images/signature/`
+and re-run `resize.sh` over everything. Keep them roughly 3.3:1 and transparent,
+or adjust `SIG_FRAC` at the top of the script.
+
+### Why it changed
+
+It started as a CSS overlay, which was wrong in two ways.
+
+It was presentation only, so anything downloaded was unsigned. And it sized
+badly: the rule was `clamp(90px, 18%, 180px)`, but a grid tile is about 368px
+wide, so 18% came to 66px and the 90px floor bound on *every single photo*.
+Everything rendered at 24% of tile width instead of 18%, and the gap from the
+edge drifted between 8px and 26px, because a percentage `bottom` resolves
+against height while `right` resolves against width.
+
+Burning in fixes both at once, and the geometry is now a fixed fraction of the
+actual image rather than of however large the browser happens to draw it.
+
+### What this does and does not buy you
+
+It raises the effort of casual reuse and means an image that travels keeps your
+name on it. It is not DRM. Anyone determined can crop or clone it out. There are
+still deliberately no right-click blockers, because they irritate real visitors
+and stop nobody.
+
+Originals are never touched. Everything in `images/` is re-derivable: delete it
+and run `resize.sh` again.
 
 ---
 
@@ -166,7 +193,8 @@ sidecars.
 **`hooks/pre-commit`** is the actual backstop. `.gitignore` does not survive
 `git add -f`, and it does not help if a 14MB original gets dropped straight into
 `images/`. The hook refuses any staged file that is from an originals folder, is
-a raw or layered format, or exceeds 600KB.
+a raw or layered format, exceeds 600KB, or is a JPEG in `images/` that did not
+come through `resize.sh` and is therefore unsigned.
 
 Git hooks are not themselves versioned, so install it once per clone:
 

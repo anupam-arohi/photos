@@ -46,6 +46,22 @@ while IFS= read -r f; do
     echo "BLOCKED  $f  (${kb}KB, limit ${MAX_KB}KB)"
     echo "         Too heavy for a web gallery. Re-export via ./resize.sh."
     FAIL=1
+    continue
+  fi
+
+  # 4. every gallery JPEG must have gone through resize.sh, which stamps the
+  #    comment. This catches a photo exported some other way and therefore
+  #    shipped unsigned.
+  if printf '%s' "$f" | grep -qE '^images/.*\.jpg$'; then
+    if command -v identify >/dev/null 2>&1; then
+      note=$(identify -format '%[comment]' "$f" 2>/dev/null || true)
+      if ! printf '%s' "$note" | grep -q 'signature:'; then
+        echo "BLOCKED  $f"
+        echo "         No signature marker. Export it with ./resize.sh so the"
+        echo "         signature is burned in, rather than converting by hand."
+        FAIL=1
+      fi
+    fi
   fi
 done <<< "$staged"
 

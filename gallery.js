@@ -65,23 +65,13 @@
     return (b.date || "").localeCompare(a.date || "");
   }
 
-  /* ---------- signature -------------------------------------------------- */
-
-  function signature(photo, prefix) {
-    // sig:"none" for photos that already carry a burned-in copyright, so they
-    // do not end up signed twice.
-    if (photo.sig === "none") return null;
-    var tone = photo.sig === "dark" ? "dark" : "white";
-    var img = el("img", "sig");
-    img.src = prefix + "images/signature/signature-" + tone + ".png";
-    img.alt = "";                    // decorative: the caption already names me
-    img.setAttribute("aria-hidden", "true");
-    img.setAttribute("data-tone", tone);
-    img.width = 400;
-    img.height = 121;
-    img.setAttribute("decoding", "async");
-    return img;
-  }
+  /* ---------- signature ----------------------------------------------------
+     Nothing to do here. The signature is composited into the JPEG by
+     resize.sh, so it is part of the image in every variant and survives a
+     download. There was a DOM overlay here; see the note in gallery.css for
+     why it went. photos.js keeps its `sig` field as a record of which tone
+     each photo was exported with.
+     ---------------------------------------------------------------------- */
 
   /* ---------- caption ---------------------------------------------------- */
 
@@ -129,8 +119,6 @@
     if (!eager) img.setAttribute("loading", "lazy");
 
     frame.appendChild(img);
-    var sig = signature(photo, prefix);
-    if (sig) frame.appendChild(sig);
     btn.appendChild(frame);
 
     fig.appendChild(btn);
@@ -161,11 +149,6 @@
     img.decoding = "async";
     frame.appendChild(img);
 
-    var sig = el("img", "sig");
-    sig.alt = "";
-    sig.setAttribute("aria-hidden", "true");
-    frame.appendChild(sig);
-
     var prev = el("button", "lb-btn lb-prev", "‹");
     prev.type = "button"; prev.setAttribute("aria-label", "Previous photo");
     var next = el("button", "lb-btn lb-next", "›");
@@ -185,7 +168,7 @@
     root.appendChild(inner);
     document.body.appendChild(root);
 
-    this.root = root; this.inner = inner; this.img = img; this.sig = sig;
+    this.root = root; this.inner = inner; this.img = img;
     this.cap = cap; this.pos = pos;
     this.focusables = [prev, next, close];
 
@@ -257,13 +240,6 @@
     this.img.width = p.width;
     this.img.height = p.height;
     this.img.alt = p.alt || p.title;
-
-    var tone = p.sig === "dark" ? "dark" : "white";
-    this.sig.hidden = (p.sig === "none");
-    if (!this.sig.hidden) {
-      this.sig.src = this.prefix + "images/signature/signature-" + tone + ".png";
-      this.sig.setAttribute("data-tone", tone);
-    }
 
     this.cap.replaceChildren.apply(this.cap, Array.prototype.slice.call(caption(p, { series: true }).childNodes));
     this.pos.textContent = (index + 1) + " / " + this.list.length;
