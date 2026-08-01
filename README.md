@@ -76,6 +76,28 @@ ImageMagick is the only dependency:
 brew install imagemagick
 ```
 
+### On file sizes
+
+`resize.sh` targets bytes, not a fixed quality. A fixed quality setting gives
+wildly inconsistent results: a smooth aurora sky lands at 40KB where silver
+sculpture against foliage hits 900KB at the identical setting. So each width has
+a budget and the script steps quality down from 82 until the file fits.
+
+| width | budget | typical |
+| ----- | ------ | ------- |
+| 800   | 120KB  | 65KB    |
+| 1400  | 280KB  | 160KB   |
+| 2000  | 500KB  | 295KB   |
+
+It tells you when it stepped down, and warns if a frame is so detailed it misses
+the budget even at quality 66. Six of the current 38 needed stepping; the most
+compressed is a nesting goose at quality 66, and side by side against a quality
+95 reference the difference is not visible at display size.
+
+Browsers loading the home grid pick the 800px variants, so the whole page is
+about 2.4MB across 38 lazy-loaded images. The larger variants only download when
+you open the lightbox.
+
 ---
 
 ## Adding a series
@@ -130,6 +152,29 @@ right-click blockers here, because they irritate real visitors and stop nobody.
 If a photograph genuinely must not be reused, burn the signature into the pixels
 with an ImageMagick `-composite` step, and accept that even that only raises the
 effort a little.
+
+---
+
+## Keeping originals out of the repo
+
+Two layers, because `.gitignore` alone is not a guarantee.
+
+**`.gitignore`** covers `Originals/` at any depth and capitalisation, the old
+`images/_originals/` convention, every camera raw format, TIFF, PSD and editor
+sidecars.
+
+**`hooks/pre-commit`** is the actual backstop. `.gitignore` does not survive
+`git add -f`, and it does not help if a 14MB original gets dropped straight into
+`images/`. The hook refuses any staged file that is from an originals folder, is
+a raw or layered format, or exceeds 600KB.
+
+Git hooks are not themselves versioned, so install it once per clone:
+
+```bash
+ln -sf ../../hooks/pre-commit .git/hooks/pre-commit
+```
+
+To bypass it deliberately: `git commit --no-verify`.
 
 ---
 

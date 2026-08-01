@@ -15,7 +15,15 @@
 set -euo pipefail
 
 OUT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/images"
-QUALITY=82
+
+# A fixed quality gives wildly different file sizes: a smooth aurora sky lands
+# at 40KB while silver sculpture against foliage hits 900KB at the same setting.
+# So budget bytes per width instead and step the quality down until it fits.
+# Keep these under the pre-commit hook's 600KB ceiling.
+BUDGET_800=120       # KB
+BUDGET_1400=280
+BUDGET_2000=500
+QUALITY_STEPS="82 78 74 70 66"
 
 # ImageMagick 7 uses `magick`, ImageMagick 6 uses `convert`.
 if command -v magick >/dev/null 2>&1; then
@@ -50,14 +58,34 @@ for src in "$@"; do
     | sed -e 's/[ _]\+/-/g' -e 's/[^a-z0-9-]//g' -e 's/-\{2,\}/-/g' -e 's/^-//' -e 's/-$//')"
 
   for w in 800 1400 2000; do
-    "$IM" "$src" \
-      -auto-orient \
-      -resize "${w}x${w}>" \
-      -strip \
-      -set 'comment' '(c) Anupam Arohi' \
-      -quality "$QUALITY" \
-      -interlace Plane \
-      "$OUT_DIR/${slug}-${w}.jpg"
+    case "$w" in
+      800)  budget=$BUDGET_800  ;;
+      1400) budget=$BUDGET_1400 ;;
+      2000) budget=$BUDGET_2000 ;;
+    esac
+    dest="$OUT_DIR/${slug}-${w}.jpg"
+
+    for q in $QUALITY_STEPS; do
+      "$IM" "$src" \
+        -auto-orient \
+        -resize "${w}x${w}>" \
+        -strip \
+        -set 'comment' '(c) Anupam Arohi' \
+        -sampling-factor 4:2:0 \
+        -define jpeg:dct-method=float \
+        -quality "$q" \
+        -interlace Plane \
+        "$dest"
+      kb=$(( ( $(wc -c < "$dest") + 1023 ) / 1024 ))
+      [ "$kb" -le "$budget" ] && break
+    done
+    # $q and $kb hold the setting that was actually kept
+    if [ "$kb" -gt "$budget" ]; then
+      echo "    note: ${slug}-${w}.jpg is ${kb}KB at q${q}, over the ${budget}KB budget." >&2
+      echo "          Very detailed frame. Crop it or accept the weight." >&2
+    elif [ "$q" != "${QUALITY_STEPS%% *}" ]; then
+      echo "    ${slug}-${w}.jpg  ${kb}KB at q${q} (stepped down to fit ${budget}KB)"
+    fi
   done
 
   # the canonical file is the same pixels as the 2000 variant
