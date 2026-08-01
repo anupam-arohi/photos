@@ -1,6 +1,6 @@
 # Full-resolution originals stay on your machine, not in the repo.
 # resize.sh reads from here and writes web versions into images/.
-images/_originals/
+Originals/
 
 .DS_Store
 Thumbs.db

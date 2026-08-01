@@ -68,6 +68,9 @@
   /* ---------- signature -------------------------------------------------- */
 
   function signature(photo, prefix) {
+    // sig:"none" for photos that already carry a burned-in copyright, so they
+    // do not end up signed twice.
+    if (photo.sig === "none") return null;
     var tone = photo.sig === "dark" ? "dark" : "white";
     var img = el("img", "sig");
     img.src = prefix + "images/signature/signature-" + tone + ".png";
@@ -126,7 +129,8 @@
     if (!eager) img.setAttribute("loading", "lazy");
 
     frame.appendChild(img);
-    frame.appendChild(signature(photo, prefix));
+    var sig = signature(photo, prefix);
+    if (sig) frame.appendChild(sig);
     btn.appendChild(frame);
 
     fig.appendChild(btn);
@@ -255,8 +259,11 @@
     this.img.alt = p.alt || p.title;
 
     var tone = p.sig === "dark" ? "dark" : "white";
-    this.sig.src = this.prefix + "images/signature/signature-" + tone + ".png";
-    this.sig.setAttribute("data-tone", tone);
+    this.sig.hidden = (p.sig === "none");
+    if (!this.sig.hidden) {
+      this.sig.src = this.prefix + "images/signature/signature-" + tone + ".png";
+      this.sig.setAttribute("data-tone", tone);
+    }
 
     this.cap.replaceChildren.apply(this.cap, Array.prototype.slice.call(caption(p, { series: true }).childNodes));
     this.pos.textContent = (index + 1) + " / " + this.list.length;
