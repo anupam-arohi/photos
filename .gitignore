@@ -1,6 +1,67 @@
-# Full-resolution originals stay on your machine, not in the repo.
-# resize.sh reads from here and writes web versions into images/.
-Originals/
+# ============================================================================
+# Full-resolution originals stay on your machine. They never go in the repo.
+# resize.sh reads from Originals/ and writes web versions into images/.
+# ============================================================================
 
+# The originals folder, at the repo root or nested anywhere, any capitalisation
+# that macOS might hand you. The leading and trailing slashes matter: they match
+# a directory rather than a file that happens to be called "originals".
+Originals/
+originals/
+ORIGINALS/
+**/Originals/
+**/originals/
+
+# Earlier convention, kept so an old working copy does not resurrect it
+images/_originals/
+_originals/
+
+# Camera raw and large intermediate formats, wherever they land. Nothing in this
+# site should ever be one of these: images/ holds web JPEGs only.
+*.dng
+*.DNG
+*.arw
+*.ARW
+*.cr2
+*.CR2
+*.cr3
+*.CR3
+*.nef
+*.NEF
+*.raf
+*.RAF
+*.orf
+*.ORF
+*.rw2
+*.RW2
+*.heic
+*.HEIC
+*.heif
+*.HEIF
+*.tif
+*.TIF
+*.tiff
+*.TIFF
+*.psd
+*.PSD
+*.xcf
+
+# Editor sidecars
+*.xmp
+*.lrcat
+*.lrcat-*
+
+# OS and editor noise
 .DS_Store
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Local tooling
+node_modules/
+.venv/
+__pycache__/

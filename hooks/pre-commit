@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Belt and braces on top of .gitignore.
+#
+# .gitignore stops accidents. It does not stop `git add -f`, and it does not
+# help if someone drops a 40MB original straight into images/. This hook does.
+#
+# Install it (git hooks are not themselves versioned, so this is per clone):
+#
+#   ln -sf ../../hooks/pre-commit .git/hooks/pre-commit
+#
+# Bypass it deliberately, if you ever genuinely need to:
+#
+#   git commit --no-verify
+
+set -euo pipefail
+
+MAX_KB=600          # no web-ready JPEG in this repo should exceed this
+FAIL=0
+
+staged=$(git diff --cached --name-only --diff-filter=AM)
+[ -z "$staged" ] && exit 0
+
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+
+  # 1. anything from an originals folder, at any depth
+  if printf '%s' "$f" | grep -qiE '(^|/)_?originals/'; then
+    echo "BLOCKED  $f"
+    echo "         Originals stay local. Run ./resize.sh on it instead."
+    FAIL=1
+    continue
+  fi
+
+  # 2. raw and large intermediate formats
+  if printf '%s' "$f" | grep -qiE '\.(dng|arw|cr2|cr3|nef|raf|orf|rw2|heic|heif|tiff?|psd|xcf)$'; then
+    echo "BLOCKED  $f"
+    echo "         Raw and layered formats do not belong in the repo."
+    FAIL=1
+    continue
+  fi
+
+  # 3. oversized files
+  [ -f "$f" ] || continue
+  kb=$(( ( $(wc -c < "$f") + 1023 ) / 1024 ))
+  if [ "$kb" -gt "$MAX_KB" ]; then
+    echo "BLOCKED  $f  (${kb}KB, limit ${MAX_KB}KB)"
+    echo "         Too heavy for a web gallery. Re-export via ./resize.sh."
+    FAIL=1
+  fi
+done <<< "$staged"
+
+if [ "$FAIL" -ne 0 ]; then
+  echo
+  echo "Commit refused. Unstage the files above, or use --no-verify if you are sure."
+  exit 1
+fi
+
+exit 0
