@@ -1,0 +1,289 @@
+/* ============================================================================
+   gallery.css
+   ----------------------------------------------------------------------------
+   DELIBERATE DEVIATION from "everything inline in the HTML".
+   The auroras guide is one page, so inlining was free there. This site has a
+   home page, a series index and one page per series, all sharing the same grid,
+   chips and lightbox. Inlining would mean five copies of the same CSS drifting
+   apart. Shared stylesheet, still zero build step, still opens from disk.
+
+   The colour tokens below are copied verbatim from
+   github.com/anupam-arohi/auroras/blob/main/index.html
+   so the two sites read as one body of work. Keep them in sync by hand.
+   ========================================================================== */
+
+:root{
+  --bg:#080d14;
+  --bg-soft:#0e1622;
+  --panel:#121c2a;
+  --border:#1e2d40;
+  --text:#dfe7f0;
+  --muted:#8fa3b8;
+  --green:#4ade80;
+  --teal:#2dd4bf;
+  --violet:#a78bfa;
+  --pink:#f472b6;
+  --amber:#fbbf24;
+  /* widened from the guide's 820px: this site is images, not prose */
+  --maxw:1140px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:400 17px/1.72 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(45,212,191,.3)}
+a:hover{color:var(--green);border-bottom-color:var(--green)}
+
+/* Visible focus everywhere. Never remove this without replacing it. */
+:focus-visible{
+  outline:2px solid var(--green);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+.skip{
+  position:absolute;left:-9999px;top:0;
+  background:var(--panel);color:var(--text);
+  padding:10px 16px;border:1px solid var(--border);border-radius:0 0 8px 0;z-index:200;
+}
+.skip:focus{left:0}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  padding:76px 24px 44px;
+  text-align:center;
+  overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 25% 0%, rgba(74,222,128,.20), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 75% 10%, rgba(167,139,250,.18), transparent 62%),
+    radial-gradient(ellipse 90% 40% at 50% 100%, rgba(45,212,191,.10), transparent 70%);
+  pointer-events:none;
+}
+.hero > *{position:relative}
+.kicker{
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--green);margin:0 0 18px;font-weight:600;
+}
+h1{
+  margin:0 0 18px;
+  font-size:clamp(32px,6.2vw,54px);
+  line-height:1.1;font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,#e8f5ee 0%,#7dd3a8 45%,#a78bfa 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.byline{color:var(--muted);font-size:15px;margin:0}
+.byline span{color:var(--text)}
+
+/* ---------- site nav ---------- */
+.nav{
+  display:flex;gap:22px;justify-content:center;flex-wrap:wrap;
+  margin:26px 0 0;padding:0;list-style:none;
+  font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+}
+.nav a{color:var(--muted);border:0}
+.nav a:hover,.nav a[aria-current="page"]{color:var(--green)}
+
+/* ---------- layout ---------- */
+main{max-width:var(--maxw);margin:0 auto;padding:0 24px 96px}
+.intro{max-width:660px;margin:44px auto 0;font-size:19px;color:var(--text)}
+.intro p{margin:0 0 16px}
+h2{
+  font-size:clamp(23px,3.6vw,30px);
+  line-height:1.25;margin:0 0 6px;font-weight:650;letter-spacing:-.01em;color:#f0f6fb;
+}
+p{margin:0 0 16px}
+
+/* ---------- filter chips ---------- */
+.filters{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  margin:44px 0 26px;padding:0;list-style:none;
+}
+.filters .label{
+  font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-right:6px;
+}
+.chip{
+  font:inherit;font-size:14px;
+  background:var(--bg-soft);color:var(--muted);
+  border:1px solid var(--border);border-radius:100px;
+  padding:5px 15px;cursor:pointer;
+  transition:color .15s,border-color .15s,background-color .15s;
+}
+.chip:hover{color:var(--text);border-color:#2a3d55}
+.chip[aria-pressed="true"]{
+  color:var(--bg);background:var(--green);border-color:var(--green);font-weight:600;
+}
+.count{color:var(--muted);font-size:14px;margin:0 0 26px}
+
+/* ---------- grid ----------
+   CSS columns rather than a JS masonry library. Reading order stays DOM order;
+   visual order runs down each column, which is normal for a photo grid. */
+.grid{columns:3;column-gap:18px;margin:0;padding:0;list-style:none}
+@media(max-width:900px){.grid{columns:2}}
+@media(max-width:560px){.grid{columns:1}}
+.grid li{break-inside:avoid;margin:0 0 18px}
+
+figure{margin:0}
+
+/* the clickable photo tile */
+.tile{
+  display:block;width:100%;padding:0;border:0;background:none;
+  cursor:zoom-in;text-align:left;
+}
+.frame{
+  position:relative;display:block;overflow:hidden;
+  border-radius:12px;border:1px solid var(--border);
+  background:var(--bg-soft);
+  line-height:0;
+}
+.frame img.photo{
+  width:100%;height:auto;display:block;
+  transition:transform .5s cubic-bezier(.2,.6,.2,1),opacity .3s;
+}
+.tile:hover .frame img.photo{transform:scale(1.022)}
+.tile:hover .frame{border-color:#2a3d55}
+
+/* ---------- signature overlay ----------
+   Presentation only. This does not stop anyone saving the underlying JPG, and
+   it is not meant to. If a photo genuinely must not be reused, burn the
+   signature into the pixels instead, and accept that even that only raises the
+   effort slightly. No right-click blockers here: they irritate real visitors
+   and stop nobody. */
+.sig{
+  position:absolute;
+  right:4%;bottom:4%;
+  width:clamp(90px,18%,180px);
+  height:auto;
+  opacity:.72;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.55));
+  pointer-events:none;
+  transition:opacity .25s;
+  z-index:2;
+}
+.tile:hover .sig{opacity:.9}
+@media(max-width:560px){.sig{width:clamp(90px,26%,140px)}}
+/* dark signature on a bright photo needs a light halo instead of a dark one */
+.sig[data-tone="dark"]{filter:drop-shadow(0 1px 3px rgba(255,255,255,.6))}
+
+/* ---------- caption ---------- */
+figcaption{
+  color:var(--muted);font-size:14px;line-height:1.55;
+  margin-top:10px;display:flex;flex-wrap:wrap;gap:0 8px;align-items:baseline;
+}
+figcaption .t{color:var(--text);font-weight:600}
+figcaption .sep{opacity:.45}
+figcaption .s{
+  flex-basis:100%;font-size:13px;color:var(--muted);opacity:.85;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- series cards ---------- */
+.series-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin:40px 0 0;padding:0;list-style:none}
+.series-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;display:flex;flex-direction:column;height:100%;
+}
+.series-card:hover{border-color:#2a3d55}
+.series-card .thumb{position:relative;line-height:0;border-bottom:1px solid var(--border)}
+.series-card .thumb img{width:100%;height:180px;object-fit:cover;display:block}
+.series-card .body{padding:18px 20px 20px}
+.series-card h3{margin:0 0 6px;font-size:18px;font-weight:650;color:#e6eef6}
+.series-card h3 a{color:inherit;border:0}
+.series-card h3 a:hover{color:var(--green)}
+.series-card p{margin:0 0 12px;font-size:14px;color:var(--muted);line-height:1.6}
+.series-card .n{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.series-note{max-width:660px;color:var(--muted);font-size:17px;margin:14px 0 0}
+.back{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+
+/* ---------- lightbox ---------- */
+.lb{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(8,13,20,.96);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  padding:clamp(12px,3vw,40px);
+}
+.lb[open],.lb.is-open{display:flex}
+.lb-inner{
+  position:relative;
+  max-width:100%;max-height:100%;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.lb-frame{
+  position:relative;line-height:0;
+  border-radius:12px;border:1px solid var(--border);overflow:hidden;
+  background:var(--bg-soft);
+}
+.lb-frame img.photo{
+  display:block;
+  max-width:min(100%, 1600px);
+  max-height:calc(100vh - 190px);
+  width:auto;height:auto;
+}
+.lb figcaption{justify-content:center;text-align:center;max-width:640px}
+.lb-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(18,28,42,.85);border:1px solid var(--border);
+  color:var(--text);font-size:20px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.lb-btn:hover{background:var(--panel);border-color:var(--green);color:var(--green)}
+.lb-prev{left:-6px}
+.lb-next{right:-6px}
+.lb-close{
+  position:absolute;top:-6px;right:-6px;transform:none;
+  width:40px;height:40px;font-size:18px;
+}
+.lb-pos{
+  color:var(--muted);font-size:12px;letter-spacing:.16em;
+  font-variant-numeric:tabular-nums;
+}
+@media(max-width:640px){
+  .lb-prev{left:0}
+  .lb-next{right:0}
+  .lb-btn{width:40px;height:40px}
+  .lb-frame img.photo{max-height:calc(100vh - 230px)}
+}
+
+/* ---------- footer ---------- */
+footer{
+  border-top:1px solid var(--border);
+  padding:36px 24px 56px;text-align:center;
+  color:var(--muted);font-size:14px;
+}
+footer p{margin:0 0 10px}
+.tags{margin-top:18px}
+.tag{
+  display:inline-block;font-size:12px;color:var(--muted);
+  border:1px solid var(--border);border-radius:100px;
+  padding:3px 11px;margin:0 4px 8px 0;
+}
+.top{display:inline-block;margin-top:8px}
+
+/* ---------- motion ---------- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
+  .tile:hover .frame img.photo{transform:none}
+}
+
+/* ---------- no-JS fallback ----------
+   Without JS the grid never renders, so show a plain list of links instead. */
+.nojs{display:none}
+.no-js .nojs{display:block}
+.no-js .filters,.no-js .count{display:none}
