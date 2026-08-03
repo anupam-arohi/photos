@@ -1,106 +1,19 @@
 /* ============================================================================
    gallery.css
    ----------------------------------------------------------------------------
-   DELIBERATE DEVIATION from "everything inline in the HTML".
-   The auroras guide is one page, so inlining was free there. This site has a
-   home page, a series index and one page per series, all sharing the same grid,
-   chips and lightbox. Inlining would mean five copies of the same CSS drifting
-   apart. Shared stylesheet, still zero build step, still opens from disk.
-
-   The colour tokens below are copied verbatim from
-   github.com/anupam-arohi/auroras/blob/main/index.html
-   so the two sites read as one body of work. Keep them in sync by hand.
+   Page-specific styles only. The shared shell (colour tokens, base type, skip
+   link, hero, nav, footer) lives in site.css, which every page loads first.
+   site.css is generated: edit it in the root repo's _shared/ and run sync.py,
+   never here.
    ========================================================================== */
 
 :root{
-  --bg:#080d14;
-  --bg-soft:#0e1622;
-  --panel:#121c2a;
-  --border:#1e2d40;
-  --text:#dfe7f0;
-  --muted:#8fa3b8;
-  --green:#4ade80;
-  --teal:#2dd4bf;
-  --violet:#a78bfa;
-  --pink:#f472b6;
-  --amber:#fbbf24;
-  /* widened from the guide's 820px: this site is images, not prose */
+  /* images, so wider than the prose sites */
   --maxw:1140px;
 }
 
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font:400 17px/1.72 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(45,212,191,.3)}
-a:hover{color:var(--green);border-bottom-color:var(--green)}
-
-/* Visible focus everywhere. Never remove this without replacing it. */
-:focus-visible{
-  outline:2px solid var(--green);
-  outline-offset:3px;
-  border-radius:4px;
-}
-
-.skip{
-  position:absolute;left:-9999px;top:0;
-  background:var(--panel);color:var(--text);
-  padding:10px 16px;border:1px solid var(--border);border-radius:0 0 8px 0;z-index:200;
-}
-.skip:focus{left:0}
-
-/* ---------- hero ---------- */
-.hero{
-  position:relative;
-  padding:76px 24px 44px;
-  text-align:center;
-  overflow:hidden;
-  border-bottom:1px solid var(--border);
-}
-.hero::before{
-  content:"";
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 70% 55% at 25% 0%, rgba(74,222,128,.20), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 75% 10%, rgba(167,139,250,.18), transparent 62%),
-    radial-gradient(ellipse 90% 40% at 50% 100%, rgba(45,212,191,.10), transparent 70%);
-  pointer-events:none;
-}
-.hero > *{position:relative}
-.kicker{
-  font-size:12px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--green);margin:0 0 18px;font-weight:600;
-}
-h1{
-  margin:0 0 18px;
-  font-size:clamp(32px,6.2vw,54px);
-  line-height:1.1;font-weight:700;letter-spacing:-.02em;
-  background:linear-gradient(100deg,#e8f5ee 0%,#7dd3a8 45%,#a78bfa 100%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.byline{color:var(--muted);font-size:15px;margin:0}
-.byline span{color:var(--text)}
-
-/* ---------- site nav ---------- */
-.nav{
-  display:flex;gap:22px;justify-content:center;flex-wrap:wrap;
-  margin:26px 0 0;padding:0;list-style:none;
-  font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-}
-.nav a{color:var(--muted);border:0}
-.nav a:hover,.nav a[aria-current="page"]{color:var(--green)}
-
-/* ---------- layout ---------- */
-main{max-width:var(--maxw);margin:0 auto;padding:0 24px 96px}
 .intro{max-width:660px;margin:44px auto 0;font-size:19px;color:var(--text)}
-.intro p{margin:0 0 16px}
-h2{
+.intro h2{
   font-size:clamp(23px,3.6vw,30px);
   line-height:1.25;margin:0 0 6px;font-weight:650;letter-spacing:-.01em;color:#f0f6fb;
 }
@@ -172,7 +85,6 @@ figure{margin:0}
    image width, inset 3% of the shorter edge, so it is identical in every
    variant and survives a download. See "The signature" in the README.
    ------------------------------------------------------------------------ */
-
 
 /* ---------- caption ---------- */
 figcaption{
@@ -256,25 +168,16 @@ figcaption .s{
   .lb-frame img.photo{max-height:calc(100vh - 230px)}
 }
 
-/* ---------- footer ---------- */
-footer{
-  border-top:1px solid var(--border);
-  padding:36px 24px 56px;text-align:center;
-  color:var(--muted);font-size:14px;
-}
-footer p{margin:0 0 10px}
 .tags{margin-top:18px}
 .tag{
   display:inline-block;font-size:12px;color:var(--muted);
   border:1px solid var(--border);border-radius:100px;
   padding:3px 11px;margin:0 4px 8px 0;
 }
-.top{display:inline-block;margin-top:8px}
 
-/* ---------- motion ---------- */
+/* ---------- motion ----------
+   The shared reset lives in site.css; this is the one gallery-only addition. */
 @media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
   .tile:hover .frame img.photo{transform:none}
 }
 

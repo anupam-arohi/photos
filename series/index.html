@@ -17,6 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#080d14">
 
+<link rel="stylesheet" href="../site.css">
 <link rel="stylesheet" href="../gallery.css">
 </head>
 <body>
@@ -27,12 +28,23 @@
   <p class="kicker">Series</p>
   <h1>Sets, not subjects</h1>
   <p class="byline">Photographs by <span>Anupam Arohi</span></p>
+  <!-- site-nav:start current="photos" -->
   <ul class="nav">
-    <li><a href="../">All</a></li>
-    <li><a href="./" aria-current="page">Series</a></li>
-    <li><a href="https://anupam-arohi.github.io/auroras/">Aurora guide</a></li>
-    <li><a href="https://anupam-arohi.github.io/about/">About</a></li>
+    <li><a href="/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/photos/" aria-current="page">Photographs</a></li>
+    <li><a href="/auroras/">Aurora guide</a></li>
+    <li><a href="/about/meditation.html">Meditation</a></li>
+    <li><a href="/books/">Books</a></li>
+    <li><a href="/lv/">Live Version</a></li>
   </ul>
+  <!-- site-nav:end -->
+  <!-- site-subnav:start set="photos" current="series" -->
+  <ul class="subnav">
+    <li><a href="/photos/">All</a></li>
+    <li><a href="/photos/series/" aria-current="page">Series</a></li>
+  </ul>
+  <!-- site-subnav:end -->
 </header>
 
 <main>
@@ -46,8 +58,8 @@
 </main>
 
 <footer>
-  <p>&copy; <a href="https://anupam-arohi.github.io/about/">Anupam Arohi</a>. All rights reserved.</p>
-  <p>Also by me: <a href="https://anupam-arohi.github.io/auroras/">a guide to hunting northern lights</a>.</p>
+  <p>&copy; <a href="/about/">Anupam Arohi</a>. All rights reserved.</p>
+  <p>Also by me: <a href="/auroras/">a guide to hunting northern lights</a>.</p>
   <p><a class="top" href="#top">Back to top</a></p>
 </footer>
 
