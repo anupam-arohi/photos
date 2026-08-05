@@ -60,13 +60,13 @@ window.SERIES = [
   {
     slug: "birds",
     title: "Birds",
-    note: "Swans, grebes, a goldeneye chick running flat out across a lake. Patience with a long lens, and a great deal of deleting.",
+    note: "Swans, grebes and garden birds. Patience with a long lens, and a great deal of deleting.",
     accent: "var(--teal)"
   },
   {
     slug: "close-to-the-ground",
     title: "Close to the Ground",
-    note: "Insects, flowers and one squirrel with both hands full. Shot at macro distances, usually within a few minutes of the front door.",
+    note: "Insects and flowers. Shot at macro distances, usually within a few minutes of the front door.",
     accent: "var(--pink)"
   },
   {
@@ -253,30 +253,6 @@ window.PHOTOS = [
     src: "Nature/41C4B2B4-302C-44F2-9E64-1F5691C41081.JPG"
   },
   {
-    file: "images/full-wingspan.jpg",
-    width: 2000, height: 1125,
-    title: "Full Wingspan",
-    place: "",
-    date: "2024-05-25",
-    tags: ["birds", "water"],
-    series: "birds",
-    alt: "A mute swan standing up in shallow water with both wings fully extended, treeline and broken cloud behind.",
-    settings: "26mm · f/1.5 · 1/1295s · ISO 50",
-    src: "Nature/IMG_8171.jpeg"
-  },
-  {
-    file: "images/wings-half-open.jpg",
-    width: 2000, height: 1200,
-    title: "Wings Half Open",
-    place: "",
-    date: "2026-03-27",
-    tags: ["birds", "water"],
-    series: "birds",
-    alt: "A mute swan rising out of the water with its wings half opened, ripples spreading away from it.",
-    settings: "60mm · f/5.6 · 1/4000s · ISO 400",
-    src: "Nature/DSC00216.JPG"
-  },
-  {
     file: "images/great-tit.jpg",
     width: 2000, height: 1342,
     title: "Great Tit",
@@ -287,18 +263,6 @@ window.PHOTOS = [
     alt: "A great tit gripping a bare twig with its head turned to one side, the background dissolved to soft green.",
     settings: "200mm · f/4 · 1/250s · ISO 8000",
     src: "Nature/Greytit.jpeg"
-  },
-  {
-    file: "images/cygnet-riding-along.jpg",
-    width: 2000, height: 1266,
-    title: "Cygnet Riding Along",
-    place: "",
-    date: "2026-06-07",
-    tags: ["birds", "water"],
-    series: "birds",
-    alt: "A mute swan swimming on dark water with a single cygnet tucked up on her back between her folded wings.",
-    settings: "200mm · f/4 · 1/1250s · ISO 100",
-    src: "Nature/CygnetsWithMom 3.jpg"
   },
   {
     file: "images/grebe-with-a-fish.jpg",
@@ -349,31 +313,6 @@ window.PHOTOS = [
     settings: "400mm · f/5.6 · 1/400s · ISO 500",
     src: "Nature/Great Crested Grebe chick 2.jpg"
   },
-  {
-    file: "images/oystercatcher.jpg",
-    width: 2000, height: 1401,
-    title: "Oystercatcher",
-    place: "",
-    date: "2026-06-22",
-    tags: ["birds"],
-    series: "birds",
-    alt: "An oystercatcher standing on dark green grass, its long orange bill bright against a black and white body.",
-    settings: "400mm · f/5.6 · 1/400s · ISO 1250",
-    sig: "none",
-    src: "Nature/MeriHarakka.jpg"
-  },
-  {
-    file: "images/running-on-water.jpg",
-    width: 2000, height: 1170,
-    title: "Running on Water",
-    place: "",
-    date: "2026-06-23",
-    tags: ["birds", "water"],
-    series: "birds",
-    alt: "A goldeneye duckling sprinting flat out across the surface of a lake, wings held out, a thin wake behind it.",
-    settings: "400mm · f/5.6 · 1/400s · ISO 500",
-    src: "Nature/TelkkaChickRunning-2b.jpg"
-  },
   /* ---------- Close to the Ground --------------------------------------- */
   {
     file: "images/robber-fly.jpg",
@@ -410,18 +349,6 @@ window.PHOTOS = [
     alt: "Three pale violet harebell flowers on thin stems, held against soft green foliage.",
     settings: "200mm · f/4 · 1/320s · ISO 100",
     src: "Nature/BlueFlowers.jpg"
-  },
-  {
-    file: "images/both-hands-full.jpg",
-    width: 2000, height: 1840,
-    title: "Both Hands Full",
-    place: "",
-    date: "2026-06-21",
-    tags: ["animals"],
-    series: "close-to-the-ground",
-    alt: "A red squirrel sitting up on gravel holding food in both front paws, ear tufts up, cheeks working.",
-    settings: "400mm · f/5.6 · 1/250s · ISO 2000",
-    src: "Nature/Squirrel 3.jpg"
   },
   {
     file: "images/hornet-moth.jpg",

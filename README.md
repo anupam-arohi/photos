@@ -146,11 +146,10 @@ came out dark. Override with `--sig=white` or `--sig=dark` if you disagree.
 For a photo that already carries its own watermark, skip the overlay:
 
 ```bash
-./resize.sh --sig=none Originals/Nature/MeriHarakka.jpg
+./resize.sh --sig=none Originals/Nature/Example.jpg
 ```
 
-`Oystercatcher` is exported that way, because the original already has a
-`© Anupam Arohi` burned into the bottom-left.
+Use this when the original already has a `© Anupam Arohi` burned in.
 
 To swap in a different signature, replace the two PNGs in `images/signature/`
 and re-run `resize.sh` over everything. Keep them roughly 3.3:1 and transparent,
